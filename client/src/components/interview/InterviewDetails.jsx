@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { jobService } from "../../services/jobService";
+import { geminiService } from "../../services/geminiService";
 import "./InterviewDetails.css";
 
 const InterviewDetails = () => {
@@ -54,33 +55,21 @@ const InterviewDetails = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("https://jobhunter-dd9n.onrender.com/api/jobs/generate-interview-prep", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          jobTitle: jobTitle.trim(),
-          companyName: companyName.trim(),
-          jobDescription: `${jobTitle} position at ${companyName}`,
-          userSkills: [],
-        }),
+      const prepData = await geminiService.generateInterviewPrep(
+        companyName.trim(),
+        jobTitle.trim()
+      );
+
+      console.log('Gemini response:', prepData); // Debug log
+      
+      setInterviewPrep({
+        ...prepData,
+        generatedAt: new Date().toISOString(),
       });
-
-      const result = await response.json();
-
-      if (result.success) {
-        setInterviewPrep({
-          ...result.data,
-          generatedAt: new Date().toISOString(),
-        });
-        setActiveTab("prep");
-      } else {
-        throw new Error(result.message || "Failed to generate interview prep");
-      }
+      setActiveTab("prep");
     } catch (error) {
-      console.error("Error fetching interview prep:", error);
-      alert("Failed to fetch interview preparation data: " + error.message);
+      console.error("Error generating interview prep:", error);
+      alert("Failed to generate interview preparation: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -89,11 +78,37 @@ const InterviewDetails = () => {
   const renderInterviewDetails = () => {
     if (!interviewDetails) return null;
 
+    const details = interviewDetails.data?.employerInterviewDetails;
+    if (!details) return null;
+
     return (
       <div className="interview-details-content">
-        <h3>Interview Details</h3>
+        <h3>Interview Details - {details.employer.name}</h3>
+        
         <div className="details-card">
-          <pre>{JSON.stringify(interviewDetails, null, 2)}</pre>
+          <div className="detail-item">
+            <h4>Position: {details.jobTitle.text}</h4>
+            <p><strong>Difficulty:</strong> {details.difficulty}</p>
+            <p><strong>Experience:</strong> {details.experience}</p>
+            <p><strong>Outcome:</strong> {details.outcome}</p>
+            <p><strong>Application Source:</strong> {details.source}</p>
+          </div>
+
+          <div className="detail-item">
+            <h4>Interview Process</h4>
+            <p>{details.processDescription}</p>
+          </div>
+
+          {details.userQuestions && details.userQuestions.length > 0 && (
+            <div className="detail-item">
+              <h4>Questions Asked</h4>
+              <ul>
+                {details.userQuestions.map((q, index) => (
+                  <li key={index}>{q.question}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -103,6 +118,20 @@ const InterviewDetails = () => {
     if (!interviewPrep) return null;
 
     const prep = interviewPrep.interviewPrep || interviewPrep;
+    console.log('Rendering prep data:', prep); // Debug log
+
+    // Handle rawOutput case
+    if (prep.rawOutput) {
+      return (
+        <div className="interview-prep-content">
+          <h3>AI-Generated Interview Preparation for {companyName} - {jobTitle}</h3>
+          <div className="prep-section">
+            <h4>AI Response</h4>
+            <pre style={{whiteSpace: 'pre-wrap', fontSize: '14px'}}>{prep.rawOutput}</pre>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className="interview-prep-content">

@@ -1,25 +1,28 @@
 .job-preferences-form {
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: clamp(1rem, 3vw, 2rem);
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-header {
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1rem, 3vw, 2rem);
   text-align: center;
 }
 
 .form-header h2 {
   color: #1a1a1a;
   margin-bottom: 0.5rem;
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
 }
 
 .form-header p {
   color: #666;
-  font-size: 0.9rem;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
 }
 
 .form-sections {
@@ -31,7 +34,7 @@
 .form-section {
   border: 1px solid #e5e5e5;
   border-radius: 8px;
-  padding: 1.5rem;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
 }
 
 .form-section h3 {
@@ -57,10 +60,11 @@
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 0.75rem;
+  padding: clamp(0.5rem, 2vw, 0.75rem);
   border: 1px solid #ddd;
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
+  box-sizing: border-box;
 }
 
 .form-group input:focus,
@@ -103,12 +107,14 @@
 }
 
 .skill-input button {
-  padding: 0.75rem 1rem;
+  padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1rem);
   background: #007bff;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+  white-space: nowrap;
 }
 
 .skill-input button:disabled {
@@ -133,13 +139,14 @@
 }
 
 .skill-tag {
-  padding: 0.25rem 0.75rem;
+  padding: clamp(0.2rem, 1vw, 0.25rem) clamp(0.5rem, 1.5vw, 0.75rem);
   background: #f8f9fa;
   border: 1px solid #dee2e6;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: clamp(0.7rem, 1.5vw, 0.8rem);
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .skill-tag:hover {
@@ -185,15 +192,17 @@
 .btn-primary {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 2rem;
+  gap: clamp(0.25rem, 1vw, 0.5rem);
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 2rem);
   background: #007bff;
   color: white;
   border: none;
   border-radius: 6px;
-  font-size: 1rem;
+  font-size: clamp(0.8rem, 2vw, 1rem);
   cursor: pointer;
   transition: background 0.2s;
+  min-width: fit-content;
+  white-space: nowrap;
 }
 
 .btn-primary:hover {
@@ -207,14 +216,58 @@
 
 @media (max-width: 768px) {
   .job-preferences-form {
-    padding: 1rem;
+    padding: 0.75rem;
   }
 
   .form-row {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 
   .benefits-grid {
     grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .skill-input {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .skill-input button {
+    width: 100%;
+  }
+
+  .form-actions {
+    margin-top: 1.5rem;
+  }
+
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .job-preferences-form {
+    padding: 0.5rem;
+  }
+
+  .form-section {
+    padding: 0.75rem;
+  }
+
+  .skill-tags {
+    gap: 0.25rem;
+  }
+
+  .skill-tag {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .btn-primary {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
   }
 }

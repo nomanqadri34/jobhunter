@@ -1,30 +1,37 @@
 .resume-upload {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .upload-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
 }
 
 .upload-header h2 {
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
 }
 
 .upload-header p {
   color: #666;
-  font-size: 16px;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .upload-section {
   background: white;
-  padding: 30px;
+  padding: clamp(1rem, 4vw, 2rem);
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .file-upload {
@@ -38,12 +45,14 @@
 
 .file-input {
   width: 100%;
-  padding: 12px;
+  padding: clamp(0.75rem, 2vw, 1rem);
   border: 2px dashed #007bff;
   border-radius: 8px;
   background: #f8f9fa;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  font-size: clamp(0.8rem, 2vw, 1rem);
 }
 
 .file-input:hover {
@@ -76,15 +85,16 @@
 
 .resume-textarea {
   width: 100%;
-  padding: 15px;
+  padding: clamp(0.75rem, 2vw, 1rem);
   border: 2px solid #e1e5e9;
   border-radius: 8px;
   font-family: inherit;
-  font-size: 14px;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
   line-height: 1.5;
   resize: vertical;
   transition: border-color 0.3s ease;
-  min-height: 120px;
+  min-height: clamp(100px, 15vw, 120px);
+  box-sizing: border-box;
 }
 
 .resume-textarea:focus {
@@ -139,10 +149,12 @@
 .job-card {
   border: 1px solid #e1e5e9;
   border-radius: 12px;
-  padding: 20px;
+  padding: clamp(1rem, 3vw, 1.5rem);
   background: white;
   transition: all 0.3s ease;
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .job-card:hover {
@@ -272,16 +284,17 @@
 .skills-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: clamp(0.5rem, 1.5vw, 0.75rem);
 }
 
 .skill-tag {
   background: #007bff;
   color: white;
-  padding: 6px 12px;
+  padding: clamp(0.25rem, 1vw, 0.5rem) clamp(0.5rem, 2vw, 0.75rem);
   border-radius: 20px;
-  font-size: 12px;
+  font-size: clamp(0.7rem, 1.8vw, 0.8rem);
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .recommendations-section {
@@ -300,8 +313,8 @@
 
 .jobs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr));
+  gap: clamp(1rem, 3vw, 1.5rem);
 }
 
 .job-recommendation-card {
@@ -322,15 +335,18 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .job-header h4 {
   color: #333;
-  font-size: 16px;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
   margin: 0;
   flex: 1;
-  margin-right: 10px;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .job-match {
@@ -369,16 +385,19 @@
 
 .apply-btn,
 .save-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: clamp(4px, 1vw, 6px) clamp(8px, 2vw, 12px);
+  border-radius: 4px;
+  font-size: clamp(10px, 1.5vw, 12px);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
   text-align: center;
   border: none;
-  flex: 1;
+  display: inline-block;
+  width: auto;
+  min-width: fit-content;
+  white-space: nowrap;
 }
 
 .apply-btn {
@@ -516,11 +535,17 @@
 
 @media (max-width: 768px) {
   .resume-upload {
-    padding: 15px;
+    padding: 0.75rem;
   }
 
   .upload-section {
-    padding: 20px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .file-upload,
+  .text-input-section {
+    margin-bottom: 1.5rem;
   }
 
   .resume-data {
@@ -529,19 +554,57 @@
 
   .jobs-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .job-actions {
     flex-direction: column;
+    gap: 0.75rem;
   }
 
   .job-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 0.75rem;
   }
 
-  .job-match {
-    margin-top: 10px;
+  .match-score {
     align-self: flex-start;
+  }
+
+  .skills-section,
+  .jobs-section {
+    padding: 1rem;
+  }
+
+  .job-details p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .resume-upload {
+    padding: 0.5rem;
+  }
+
+  .upload-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .upload-header p {
+    font-size: 0.85rem;
+  }
+
+  .job-card {
+    padding: 0.75rem;
+  }
+
+  .skills-list {
+    gap: 0.25rem;
+  }
+
+  .skill-tag {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
   }
 }

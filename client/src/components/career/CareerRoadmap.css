@@ -1,37 +1,43 @@
 .career-roadmap {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .roadmap-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: clamp(1.5rem, 4vw, 2rem);
 }
 
 .roadmap-header h2 {
   color: #333;
-  margin-bottom: 10px;
-  font-size: 28px;
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
 }
 
 .roadmap-header p {
   color: #666;
-  font-size: 16px;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .roadmap-form {
   background: white;
-  padding: 30px;
+  padding: clamp(1rem, 4vw, 2rem);
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 30px;
+  margin-bottom: clamp(1.5rem, 4vw, 2rem);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-section h3 {
   color: #333;
-  margin-bottom: 25px;
-  font-size: 20px;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+  font-size: clamp(1.1rem, 3vw, 1.25rem);
 }
 
 .input-group {
@@ -49,11 +55,12 @@
 .skills-input,
 .experience-select {
   width: 100%;
-  padding: 12px 16px;
+  padding: clamp(0.75rem, 2vw, 1rem);
   border: 2px solid #e1e5e9;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
   transition: border-color 0.3s ease;
+  box-sizing: border-box;
 }
 
 .job-title-input:focus,
@@ -70,31 +77,35 @@
 
 .button-group {
   display: flex;
-  gap: 15px;
-  margin-top: 25px;
+  gap: clamp(0.75rem, 2vw, 1rem);
+  margin-top: clamp(1rem, 3vw, 1.5rem);
+  flex-wrap: wrap;
 }
 
 .generate-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 15px 30px;
+  gap: clamp(0.5rem, 1.5vw, 0.75rem);
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 3vw, 2rem);
   border: none;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   flex: 1;
+  min-width: fit-content;
   position: relative;
   overflow: hidden;
+  white-space: nowrap;
 }
 
 .btn-icon {
-  width: 20px;
-  height: 20px;
+  width: clamp(16px, 3vw, 20px);
+  height: clamp(16px, 3vw, 20px);
   stroke-width: 2;
+  flex-shrink: 0;
 }
 
 .btn-spinner {
@@ -157,7 +168,7 @@
 }
 
 .roadmap-section {
-  padding: 25px;
+  padding: clamp(1rem, 3vw, 1.5rem);
   border-bottom: 1px solid #e1e5e9;
 }
 
@@ -175,36 +186,42 @@
 .roadmap-content {
   background: #f8f9fa;
   border-radius: 8px;
-  padding: 20px;
+  padding: clamp(1rem, 3vw, 1.5rem);
   border-left: 4px solid #007bff;
+  overflow-x: auto;
 }
 
 .roadmap-content pre {
   white-space: pre-wrap;
   font-family: inherit;
-  font-size: 14px;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
   line-height: 1.6;
   color: #333;
   margin: 0;
+  word-break: break-word;
 }
 
 .roadmap-actions {
-  padding: 20px 25px;
+  padding: clamp(1rem, 3vw, 1.5rem);
   background: #f8f9fa;
   display: flex;
-  gap: 15px;
+  gap: clamp(0.75rem, 2vw, 1rem);
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .action-btn {
-  padding: 10px 20px;
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem);
   background: #28a745;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
   transition: background-color 0.3s ease;
+  min-width: fit-content;
+  white-space: nowrap;
 }
 
 .action-btn:hover {
@@ -227,7 +244,7 @@
 
 .loading-spinner {
   background: white;
-  padding: 60px;
+  padding: clamp(2rem, 8vw, 4rem);
   border-radius: 20px;
   text-align: center;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
@@ -237,6 +254,8 @@
   justify-content: center;
   transform: scale(1);
   animation: popIn 0.4s ease-out forwards;
+  max-width: 90vw;
+  margin: 0 1rem;
 }
 
 @keyframes popIn {
@@ -298,11 +317,12 @@
 
 .loading-spinner p {
   color: #333;
-  font-size: 20px;
+  font-size: clamp(1rem, 3vw, 1.25rem);
   font-weight: 700;
   margin: 0;
   letter-spacing: 1px;
   animation: pulseText 1.5s ease-in-out infinite alternate;
+  text-align: center;
 }
 
 @keyframes pulseText {
@@ -318,28 +338,71 @@
 
 @media (max-width: 768px) {
   .career-roadmap {
-    padding: 15px;
+    padding: 0.75rem;
   }
 
   .roadmap-form {
-    padding: 20px;
+    padding: 1rem;
   }
 
   .button-group {
     flex-direction: column;
+    gap: 0.75rem;
   }
 
   .roadmap-actions {
     flex-direction: column;
+    gap: 0.75rem;
   }
 
-  .generate-btn.primary,
-  .generate-btn.secondary,
+  .generate-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
   .action-btn {
     width: 100%;
+    text-align: center;
+  }
+
+  .input-group {
+    margin-bottom: 1rem;
+  }
+
+  .roadmap-section {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .career-roadmap {
+    padding: 0.5rem;
+  }
+
+  .roadmap-form {
+    padding: 0.75rem;
   }
 
   .roadmap-header h2 {
-    font-size: 24px;
+    font-size: 1.25rem;
+  }
+
+  .roadmap-header p {
+    font-size: 0.85rem;
+  }
+
+  .generate-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .btn-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .action-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
   }
 }

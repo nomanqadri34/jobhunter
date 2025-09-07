@@ -112,15 +112,6 @@ const AdvancedJobSearch = () => {
             Apply Now
           </a>
         )}
-        <button className="save-btn" onClick={() => handleSaveJob(job)}>
-          Save Job
-        </button>
-        <button
-          className="interview-prep-btn"
-          onClick={() => handleGenerateInterviewPrep(job)}
-        >
-          Interview Prep
-        </button>
       </div>
     </div>
   );

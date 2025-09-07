@@ -300,27 +300,25 @@
 
 .job-actions {
   display: flex;
-  gap: 10px;
+  justify-content: flex-start;
 }
 
-.apply-btn,
-.save-btn,
-.interview-prep-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
+.apply-btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
   text-align: center;
   border: none;
-}
-
-.apply-btn {
   background: #28a745;
   color: white;
-  flex: 1;
+  display: inline-block;
+  width: auto;
+  min-width: fit-content;
+  white-space: nowrap;
 }
 
 .apply-btn:hover {
@@ -329,33 +327,7 @@
   color: white;
 }
 
-.save-btn {
-  background: white;
-  color: #007bff;
-  border: 1px solid #007bff;
-  flex: 1;
-}
-
-.save-btn:hover {
-  background: #007bff;
-  color: white;
-}
-
-.interview-prep-btn {
-  background: white;
-  color: #6f42c1;
-  border: 1px solid #6f42c1;
-  flex: 1;
-}
-
-.interview-prep-btn:hover {
-  background: #6f42c1;
-  color: white;
-}
-
-.apply-btn:focus-visible,
-.save-btn:focus-visible,
-.interview-prep-btn:focus-visible {
+.apply-btn:focus-visible {
   outline: 3px solid rgba(0, 123, 255, 0.25);
   outline-offset: 2px;
 }
@@ -491,15 +463,8 @@
     grid-template-columns: 1fr;
   }
 
-  .job-actions {
-    flex-direction: column;
-  }
-
-  .apply-btn,
-  .save-btn,
-  .interview-prep-btn {
-    flex: none;
-    margin-bottom: 8px;
-    width: 100%;
+  .apply-btn {
+    width: auto;
+    min-width: 100px;
   }
 }

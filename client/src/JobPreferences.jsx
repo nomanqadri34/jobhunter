@@ -2,15 +2,25 @@ import React from 'react';
 
 const JobPreferences = ({ preferences, onChange, onSubmit, loading }) => {
   return (
-    <div style={{ marginTop: '30px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
-      <h2>Set Your Job Preferences</h2>
+    <div style={{ 
+      marginTop: 'clamp(1rem, 4vw, 2rem)', 
+      borderTop: '1px solid #eee', 
+      paddingTop: 'clamp(1rem, 3vw, 1.5rem)',
+      width: '100%',
+      boxSizing: 'border-box'
+    }}>
+      <h2 style={{ 
+        fontSize: 'clamp(1.25rem, 3vw, 1.5rem)',
+        marginBottom: 'clamp(1rem, 2vw, 1.5rem)'
+      }}>Set Your Job Preferences</h2>
       <form
         onSubmit={onSubmit}
         style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '15px',
+          gap: 'clamp(0.75rem, 2vw, 1rem)',
           maxWidth: '500px',
+          width: '100%',
         }}
       >
         <div>
@@ -25,9 +35,11 @@ const JobPreferences = ({ preferences, onChange, onSubmit, loading }) => {
             onChange={onChange}
             style={{
               width: '100%',
-              padding: '8px',
+              padding: 'clamp(0.5rem, 1.5vw, 0.75rem)',
               border: '1px solid #ccc',
               borderRadius: '4px',
+              fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+              boxSizing: 'border-box',
             }}
             required
           />
@@ -45,9 +57,11 @@ const JobPreferences = ({ preferences, onChange, onSubmit, loading }) => {
             onChange={onChange}
             style={{
               width: '100%',
-              padding: '8px',
+              padding: 'clamp(0.5rem, 1.5vw, 0.75rem)',
               border: '1px solid #ccc',
               borderRadius: '4px',
+              fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+              boxSizing: 'border-box',
             }}
           />
         </div>
@@ -63,9 +77,11 @@ const JobPreferences = ({ preferences, onChange, onSubmit, loading }) => {
             onChange={onChange}
             style={{
               width: '100%',
-              padding: '8px',
+              padding: 'clamp(0.5rem, 1.5vw, 0.75rem)',
               border: '1px solid #ccc',
               borderRadius: '4px',
+              fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+              boxSizing: 'border-box',
             }}
           >
             <option value="">Select...</option>
@@ -88,9 +104,11 @@ const JobPreferences = ({ preferences, onChange, onSubmit, loading }) => {
             onChange={onChange}
             style={{
               width: '100%',
-              padding: '8px',
+              padding: 'clamp(0.5rem, 1.5vw, 0.75rem)',
               border: '1px solid #ccc',
               borderRadius: '4px',
+              fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+              boxSizing: 'border-box',
             }}
           >
             <option value="">Select...</option>
@@ -114,9 +132,11 @@ const JobPreferences = ({ preferences, onChange, onSubmit, loading }) => {
             onChange={onChange}
             style={{
               width: '100%',
-              padding: '8px',
+              padding: 'clamp(0.5rem, 1.5vw, 0.75rem)',
               border: '1px solid #ccc',
               borderRadius: '4px',
+              fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+              boxSizing: 'border-box',
             }}
             placeholder="React, JavaScript, Node.js"
           />
@@ -126,13 +146,16 @@ const JobPreferences = ({ preferences, onChange, onSubmit, loading }) => {
           type="submit"
           disabled={loading}
           style={{
-            padding: '10px 20px',
+            padding: 'clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem)',
             backgroundColor: loading ? '#ccc' : '#007bff',
             color: 'white',
             border: 'none',
             borderRadius: '4px',
             cursor: loading ? 'not-allowed' : 'pointer',
-            fontSize: '16px',
+            fontSize: 'clamp(0.8rem, 2vw, 1rem)',
+            minWidth: 'fit-content',
+            whiteSpace: 'nowrap',
+            marginTop: 'clamp(0.5rem, 2vw, 1rem)',
           }}
         >
           {loading ? 'Searching Jobs...' : 'Search Jobs'}
