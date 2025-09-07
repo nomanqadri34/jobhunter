@@ -11,8 +11,9 @@
   "dependencies": {
     "@descope/react-sdk": "^1.0.0",
     "@descope/web-js-sdk": "^1.35.1",
-    "axios": "^1.6.0",
+    "axios": "^1.11.0",
     "lucide-react": "^0.263.0",
+    "pdfjs-dist": "^5.4.149",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.0",

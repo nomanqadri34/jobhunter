@@ -54,21 +54,18 @@ const InterviewDetails = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(
-        "http://localhost:8000/api/jobs/api/generate-interview-prep",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            jobTitle: jobTitle.trim(),
-            companyName: companyName.trim(),
-            jobDescription: `${jobTitle} position at ${companyName}`,
-            userSkills: [],
-          }),
-        }
-      );
+      const response = await fetch("https://jobhunter-dd9n.onrender.com/api/jobs/generate-interview-prep", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          jobTitle: jobTitle.trim(),
+          companyName: companyName.trim(),
+          jobDescription: `${jobTitle} position at ${companyName}`,
+          userSkills: [],
+        }),
+      });
 
       const result = await response.json();
 

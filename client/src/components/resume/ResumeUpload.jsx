@@ -1,208 +1,189 @@
 import React, { useState } from "react";
-import { jobService } from "../../services/jobService";
+import * as pdfjsLib from "pdfjs-dist";
+import pdfjsWorker from "pdfjs-dist/build/pdf.worker?url";
 import "./ResumeUpload.css";
 
-const ResumeUpload = ({ onResumeProcessed }) => {
-  const [resumeText, setResumeText] = useState("");
-  const [file, setFile] = useState(null);
-  const [parsedResume, setParsedResume] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [jobRecommendations, setJobRecommendations] = useState(null);
+// configure worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
-  const handleFileUpload = async (event) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      try {
-        setLoading(true);
-        const result = await jobService.parseResumeFile(selectedFile);
-        setParsedResume(result.data);
-        if (onResumeProcessed) {
-          onResumeProcessed(result.data);
-        }
-        const parsed = result?.data || {};
-        const derivedText =
-          parsed.rawText ||
-          parsed.text ||
-          parsed.content ||
-          parsed.extractedText ||
-          parsed.resumeText ||
-          "";
-        if (derivedText) {
-          setResumeText(derivedText);
-        }
-        if (result.data) {
-          await getJobRecommendations(result.data);
-        }
-      } catch (err) {
-        console.error("Resume file parse error:", err);
-        alert("Failed to read resume file. You can paste resume text and try again.");
-      } finally {
-        setLoading(false);
-      }
-    }
+const ResumeUpload = ({ onResumeProcessed }) => {
+  const [file, setFile] = useState(null);
+  const [extractedSkills, setExtractedSkills] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [jobs, setJobs] = useState([]);
+
+  const extractSkillsFromText = (text) => {
+    const skillKeywords = [
+      "javascript", "python", "java", "react", "node.js", "angular", "vue.js",
+      "html", "css", "sql", "mongodb", "postgresql", "mysql", "aws", "azure",
+      "docker", "kubernetes", "git", "github", "typescript", "php", "ruby",
+      "c++", "c#", ".net", "spring", "django", "flask", "express", "laravel",
+      "bootstrap", "tailwind", "sass", "less", "webpack", "babel", "npm",
+      "yarn", "redux", "vuex", "graphql", "rest api", "microservices",
+      "agile", "scrum", "devops", "ci/cd", "jenkins", "terraform", "ansible",
+      "linux", "ubuntu", "centos", "nginx", "apache", "redis", "elasticsearch",
+      "machine learning", "ai", "data science", "pandas", "numpy", "tensorflow",
+      "pytorch", "scikit-learn", "r", "matlab", "tableau", "power bi",
+      "project management", "leadership", "communication", "problem solving",
+      "teamwork", "analytical", "creative", "marketing", "sales", "finance",
+      "accounting", "excel", "powerpoint", "word", "photoshop", "illustrator",
+      "figma", "sketch", "ui/ux", "design", "wireframing", "prototyping"
+    ];
+
+    const textLower = text.toLowerCase();
+    const foundSkills = skillKeywords.filter(skill => 
+      textLower.includes(skill.toLowerCase())
+    );
+
+    return [...new Set(foundSkills)];
   };
 
-  const handleParseResume = async () => {
-    if (!resumeText.trim()) {
-      alert("Please upload a resume file or paste resume text");
-      return;
+  const searchJobsWithSkills = async (skills) => {
+    const allJobs = [];
+    const RAPIDAPI_KEY = "178e03ae52msh333250cd810e2a4p19a7a1jsne730aff3a9b5";
+
+    for (const skill of skills.slice(0, 3)) {
+      try {
+        const query = `${skill} jobs`;
+        const response = await fetch(
+          `https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(query)}&page=1&num_pages=1&country=us&date_posted=all`,
+          {
+            method: "GET",
+            headers: {
+              "x-rapidapi-host": "jsearch.p.rapidapi.com",
+              "x-rapidapi-key": RAPIDAPI_KEY
+            }
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.data) {
+            allJobs.push(...data.data);
+          }
+        }
+      } catch (error) {
+        console.warn(`Failed to search jobs for skill: ${skill}`, error);
+      }
     }
 
+    const uniqueJobs = allJobs.filter(
+      (job, index, self) => index === self.findIndex(j => j.job_id === job.job_id)
+    );
+
+    const jobsWithScores = uniqueJobs.map(job => {
+      const jobTitle = (job.job_title || "").toLowerCase();
+      const jobDesc = (job.job_description || "").toLowerCase();
+      
+      let matchScore = 30;
+      let skillMatches = 0;
+
+      skills.forEach(skill => {
+        const skillLower = skill.toLowerCase();
+        if (jobTitle.includes(skillLower)) {
+          matchScore += 20;
+          skillMatches++;
+        } else if (jobDesc.includes(skillLower)) {
+          matchScore += 10;
+          skillMatches++;
+        }
+      });
+
+      if (skillMatches >= 2) matchScore += 15;
+
+      return { ...job, matchScore: Math.min(matchScore, 98), skillMatches };
+    });
+
+    return jobsWithScores
+      .filter(job => job.matchScore >= 40)
+      .sort((a, b) => b.matchScore - a.matchScore)
+      .slice(0, 10);
+  };
+
+  const processText = async (text) => {
     setLoading(true);
     try {
-      const parseResult = await jobService.parseResume(resumeText);
-      setParsedResume(parseResult.data);
+      const skills = extractSkillsFromText(text);
+      setExtractedSkills(skills);
 
-      if (parseResult.data) {
-        await getJobRecommendations(parseResult.data);
+      if (skills.length === 0) {
+        alert("No skills found. Please ensure your resume contains clear skill information.");
+        setJobs([]);
+        return;
       }
+
+      const matchedJobs = await searchJobsWithSkills(skills);
+      setJobs(matchedJobs);
 
       if (onResumeProcessed) {
-        onResumeProcessed(parseResult.data);
+        onResumeProcessed({ skills, text });
       }
 
-      alert("Resume processed successfully!");
+      console.log(`Extracted ${skills.length} skills and found ${matchedJobs.length} matching jobs`);
     } catch (error) {
       console.error("Resume processing error:", error);
-      alert("Failed to process resume. Please try again.");
+      alert("Failed to process resume: " + error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const getJobRecommendations = async (resumeData) => {
+  const extractTextFromPDF = async (file) => {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    
+    let textContent = "";
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const text = await page.getTextContent();
+      textContent += text.items.map((s) => s.str).join(" ") + "\n";
+    }
+
+    return textContent;
+  };
+
+  const handleFileUpload = async (event) => {
+    const selectedFile = event.target.files[0];
+    if (!selectedFile) return;
+
+    setFile(selectedFile);
+    
     try {
-      const extractedSkills = resumeData.Skills || resumeData.skills || [];
-      const workExperience = resumeData.WorkExperience || [];
-      const experienceLevel = resumeData.ExperienceLevel || resumeData.experienceLevel || "";
-      
-      // Only proceed if we have extracted skills
-      if (extractedSkills.length === 0) {
-        console.log("No skills found in resume. Cannot search for jobs without skills.");
-        setJobRecommendations([]);
+      let text = '';
+      if (selectedFile.type === "text/plain") {
+        text = await selectedFile.text();
+      } else if (selectedFile.type === "application/pdf") {
+        text = await extractTextFromPDF(selectedFile);
+      } else {
+        alert("Please upload a PDF or TXT file.");
         return;
       }
       
-      const searchQueries = [];
-      
-      // Use only exact skills from resume
-      extractedSkills.slice(0, 5).forEach(skill => {
-        if (skill && skill.trim()) {
-          searchQueries.push(skill.trim());
-        }
-      });
-      
-      // Use job titles from work experience if available
-      if (workExperience.length > 0) {
-        workExperience.slice(0, 2).forEach(exp => {
-          if (exp.JobTitle && exp.JobTitle.trim()) {
-            searchQueries.push(exp.JobTitle.trim());
-          }
-        });
-      }
-      
-      // Only search if we have skills or job titles
-      if (searchQueries.length === 0) {
-        console.log("No valid skills or job titles found for job search.");
-        setJobRecommendations([]);
-        return;
-      }
-      
-      const allJobs = [];
-      
-      // Search with skill-based queries only
-      for (const query of searchQueries.slice(0, 6)) {
-        try {
-          console.log(`Searching jobs for skill/title: "${query}"`);
-          const result = await jobService.searchJobsJSearch(query, 1, 3);
-          if (result.data?.data) {
-            allJobs.push(...result.data.data);
-          }
-        } catch (error) {
-          console.warn(`Job search failed for query: "${query}"`, error);
-        }
-      }
-      
-      // Remove duplicates
-      const uniqueJobs = allJobs.filter(
-        (job, index, self) =>
-          index === self.findIndex((j) => j.job_id === job.job_id)
-      );
-      
-      // Calculate match scores based on skill overlap
-      const jobsWithScores = uniqueJobs.map(job => {
-        const jobTitle = (job.job_title || "").toLowerCase();
-        const jobDesc = (job.job_description || "").toLowerCase();
-        
-        let matchScore = 30; // Lower base score
-        let skillMatches = 0;
-        
-        // Calculate skill matches
-        extractedSkills.forEach(skill => {
-          const skillLower = skill.toLowerCase();
-          if (jobTitle.includes(skillLower)) {
-            matchScore += 20; // Higher weight for title matches
-            skillMatches++;
-          } else if (jobDesc.includes(skillLower)) {
-            matchScore += 10; // Lower weight for description matches
-            skillMatches++;
-          }
-        });
-        
-        // Bonus for multiple skill matches
-        if (skillMatches >= 2) {
-          matchScore += 15;
-        }
-        
-        // Experience level match bonus
-        if (experienceLevel && (jobTitle.includes(experienceLevel.toLowerCase()) || jobDesc.includes(experienceLevel.toLowerCase()))) {
-          matchScore += 10;
-        }
-        
-        return { ...job, matchScore: Math.min(matchScore, 98), skillMatches };
-      });
-      
-      // Sort by match score and skill matches, take top 12
-      const sortedJobs = jobsWithScores
-        .filter(job => job.matchScore >= 40) // Only show jobs with decent match
-        .sort((a, b) => {
-          if (b.matchScore !== a.matchScore) {
-            return b.matchScore - a.matchScore;
-          }
-          return b.skillMatches - a.skillMatches;
-        })
-        .slice(0, 12);
-      
-      setJobRecommendations(sortedJobs);
-      console.log(`Found ${sortedJobs.length} skill-matched job recommendations`);
-      
+      await processText(text);
     } catch (error) {
-      console.error("Error getting job recommendations:", error);
-      setJobRecommendations([]);
+      alert(error.message);
+    }
+  };
+
+  const handleTextPaste = async (event) => {
+    const text = event.target.value;
+    if (text.trim().length > 50) {
+      await processText(text);
     }
   };
 
   const renderJobCard = (job) => (
-    <div key={job.job_id} className="job-recommendation-card">
+    <div key={job.job_id} className="job-card">
       <div className="job-header">
         <h4>{job.job_title}</h4>
-        <span className="job-match">
-          Match: {job.matchScore || 75}%
-        </span>
+        <span className="match-score">Match: {job.matchScore}%</span>
       </div>
+      
       <div className="job-details">
-        <p>
-          <strong>Company:</strong> {job.employer_name}
-        </p>
-        <p>
-          <strong>Location:</strong> {job.job_city}, {job.job_state}
-        </p>
-        {job.job_salary && (
-          <p>
-            <strong>Salary:</strong> {job.job_salary}
-          </p>
-        )}
+        <p><strong>Company:</strong> {job.employer_name}</p>
+        <p><strong>Location:</strong> {job.job_city}, {job.job_state}</p>
+        {job.job_salary && <p><strong>Salary:</strong> {job.job_salary}</p>}
         <p className="job-description">
           {job.job_description?.substring(0, 150)}...
         </p>
@@ -212,6 +193,7 @@ const ResumeUpload = ({ onResumeProcessed }) => {
           </p>
         )}
       </div>
+
       <div className="job-actions">
         {job.job_apply_link && (
           <a
@@ -223,38 +205,26 @@ const ResumeUpload = ({ onResumeProcessed }) => {
             Apply Now
           </a>
         )}
-        <button className="save-btn" onClick={() => handleSaveJob(job)}>
-          Save Job
-        </button>
       </div>
     </div>
   );
 
-  const handleSaveJob = async (job) => {
-    try {
-      await jobService.saveJob(job.job_id);
-      alert("Job saved successfully!");
-    } catch (error) {
-      console.error("Save job error:", error);
-      alert("Failed to save job. Please try again.");
-    }
-  };
-
   return (
     <div className="resume-upload">
       <div className="upload-header">
-        <h2>Resume Upload & Skill-Based Job Matching</h2>
-        <p>Upload your resume to extract skills and find matching jobs</p>
+        <h2>Resume Skill Extraction & Job Matching</h2>
+        <p>Upload your resume text or paste it below to extract skills and find matching jobs</p>
       </div>
 
       <div className="upload-section">
         <div className="file-upload">
-          <h3>Upload Resume File</h3>
+          <h3>Upload Resume (PDF or TXT)</h3>
           <input
             type="file"
-            accept=".txt,.pdf,.doc,.docx"
+            accept=".pdf,.txt"
             onChange={handleFileUpload}
             className="file-input"
+            disabled={loading}
           />
           {file && (
             <div className="file-info">
@@ -263,66 +233,50 @@ const ResumeUpload = ({ onResumeProcessed }) => {
           )}
         </div>
 
-        <div className="text-upload">
-          <h3>Or Paste Resume Text</h3>
+        <div className="text-input-section">
+          <h3>Or paste your resume text here:</h3>
           <textarea
-            placeholder="Paste your resume text here..."
-            value={resumeText}
-            onChange={(e) => setResumeText(e.target.value)}
+            placeholder="Paste your resume content here..."
             className="resume-textarea"
-            rows="10"
+            onChange={handleTextPaste}
+            disabled={loading}
+            rows="8"
           />
         </div>
 
-        <button
-          onClick={handleParseResume}
-          disabled={loading || !resumeText.trim()}
-          className="process-btn"
-        >
-          {loading ? (
-            <>
-              <div className="btn-spinner"></div>
-              Extracting Skills & Finding Jobs...
-            </>
-          ) : (
-            <>
-              <svg
-                className="btn-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-              >
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14,2 14,8 20,8" />
-                <line x1="16" y1="13" x2="8" y2="13" />
-                <line x1="16" y1="17" x2="8" y2="17" />
-                <polyline points="10,9 9,9 8,9" />
-              </svg>
-              Extract Skills & Find Matching Jobs
-            </>
-          )}
-        </button>
+        {loading && (
+          <div className="loading-section">
+            <div className="spinner"></div>
+            <p>Extracting skills and searching for jobs...</p>
+          </div>
+        )}
       </div>
 
+      {extractedSkills.length > 0 && (
+        <div className="skills-section">
+          <h3>Extracted Skills ({extractedSkills.length})</h3>
+          <div className="skills-list">
+            {extractedSkills.map((skill, index) => (
+              <span key={index} className="skill-tag">
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
+      {jobs.length > 0 && (
+        <div className="jobs-section">
+          <h3>Matching Jobs ({jobs.length})</h3>
+          <div className="jobs-grid">
+            {jobs.map(renderJobCard)}
+          </div>
+        </div>
+      )}
 
-      {jobRecommendations !== null && (
-        <div className="recommendations-section">
-          <h3>Jobs Matching Your Skills</h3>
-          {jobRecommendations.length > 0 ? (
-            <div className="jobs-grid">
-              {jobRecommendations.map(renderJobCard)}
-            </div>
-          ) : (
-            <div className="no-jobs-message">
-              <p>
-                No jobs found matching your extracted skills. 
-                {parsedResume && (parsedResume.Skills || parsedResume.skills)?.length === 0 && 
-                  " Please ensure your resume contains clear skill information."
-                }
-              </p>
-            </div>
-          )}
+      {!loading && extractedSkills.length > 0 && jobs.length === 0 && (
+        <div className="no-jobs-message">
+          <p>No matching jobs found for your skills. Try different content or check back later.</p>
         </div>
       )}
     </div>

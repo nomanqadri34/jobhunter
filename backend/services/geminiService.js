@@ -74,7 +74,7 @@ Make it practical and achievable for someone at the ${experienceLevel} level.
 
     async generateInterviewPrep(jobTitle, companyName, jobDescription = '', resumeData = null) {
         if (!this.model) {
-            throw new Error('Gemini API not available - cannot generate dynamic interview prep');
+            return this.getFallbackInterviewPrep(jobTitle, companyName, resumeData);
         }
 
         // Extract dynamic data from resume and job description
@@ -289,34 +289,68 @@ Be specific and actionable. Focus on the most efficient path to becoming employa
         );
     }
 
-    generateDynamicInterviewPrep(jobTitle, companyName, jobDescription, resumeData) {
-        if (!resumeData || !jobDescription) {
-            throw new Error('Resume data and job description required for dynamic interview prep');
-        }
-        
-        const candidateSkills = resumeData.Skills || resumeData.skills || [];
-        const workExperience = resumeData.WorkExperience || [];
-        const jobRequirements = this.extractJobRequirements(jobDescription);
-        const skillGaps = this.identifySkillGaps(candidateSkills, jobRequirements.skills);
-        
+    getFallbackInterviewPrep(jobTitle, companyName, resumeData = null) {
         return {
-            message: 'Dynamic interview prep requires Gemini AI for personalized content',
-            candidateProfile: {
-                skills: candidateSkills,
-                experience: workExperience.map(exp => `${exp.JobTitle} at ${exp.Company}`),
-                skillMatches: jobRequirements.skills.filter(skill => 
-                    candidateSkills.some(cs => cs.toLowerCase().includes(skill.toLowerCase()))
-                ),
-                skillGaps: skillGaps
+            companyResearch: {
+                keyFacts: [
+                    `${companyName} is a leading company in their industry`,
+                    `Research ${companyName}'s mission, vision, and values`,
+                    `Look up recent news and developments about ${companyName}`,
+                    `Understand ${companyName}'s products, services, and market position`
+                ],
+                recentNews: [
+                    `Check ${companyName}'s latest press releases and announcements`,
+                    `Review their social media updates and company blog`,
+                    `Look for recent awards, partnerships, or expansions`
+                ],
+                culture: `Research ${companyName}'s work culture through employee reviews on Glassdoor, LinkedIn, and company website. Look for information about work-life balance, team dynamics, and company values.`
             },
-            jobAnalysis: {
-                requiredSkills: jobRequirements.skills,
-                requirements: jobRequirements.requirements,
-                matchPercentage: Math.round((jobRequirements.skills.filter(skill => 
-                    candidateSkills.some(cs => cs.toLowerCase().includes(skill.toLowerCase()))
-                ).length / Math.max(jobRequirements.skills.length, 1)) * 100)
-            },
-            recommendation: 'Enable Gemini AI to generate personalized interview questions, company research, and preparation timeline based on your specific background and this job requirements.'
+            technicalQuestions: [
+                `What experience do you have in ${jobTitle} roles?`,
+                'Describe a challenging project you worked on and how you solved it',
+                'How do you stay updated with industry trends and technologies?',
+                'Walk me through your problem-solving approach',
+                'What tools and technologies are you most comfortable with?',
+                'How do you ensure quality in your work?',
+                'Describe a time when you had to learn something new quickly'
+            ],
+            behavioralQuestions: [
+                'Tell me about yourself and your career journey',
+                `Why are you interested in working at ${companyName}?`,
+                'Describe a time when you faced a difficult challenge at work',
+                'How do you handle working under pressure or tight deadlines?',
+                'Tell me about a time you had to work with a difficult team member',
+                'Where do you see yourself in 5 years?',
+                'What motivates you in your work?',
+                'Describe a time when you had to adapt to significant changes'
+            ],
+            questionsToAsk: [
+                'What does a typical day look like in this role?',
+                'What are the biggest challenges facing the team right now?',
+                'How do you measure success in this position?',
+                'What opportunities are there for professional development?',
+                `What do you enjoy most about working at ${companyName}?`,
+                'What are the next steps in the interview process?',
+                'How would you describe the team culture?'
+            ],
+            starExamples: [
+                {
+                    situation: 'Describe a specific challenging situation you faced in a previous role',
+                    task: 'Explain what you needed to accomplish or the goal you were working toward',
+                    action: 'Detail the specific actions you took to address the situation',
+                    result: 'Share the positive outcome and what you learned from the experience'
+                }
+            ],
+            preparationChecklist: [
+                `Research ${companyName} thoroughly - history, mission, recent news`,
+                'Review the job description and match your experience to requirements',
+                'Prepare 3-5 STAR method examples from your experience',
+                'Practice common interview questions out loud',
+                'Prepare thoughtful questions to ask the interviewer',
+                'Plan your outfit and route to the interview location',
+                'Bring multiple copies of your resume and a notepad',
+                'Get a good night\'s sleep before the interview'
+            ]
         };
     }
 }

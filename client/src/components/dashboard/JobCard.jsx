@@ -113,72 +113,90 @@ export const JobCard = ({ job, onSave, onApply }) => {
   };
 
   const normalizeInterviewPrep = (input) => {
-    if (!input) return { questions: [], tips: [] };
-    const base = input.interviewPrep || input; // API sometimes nests under interviewPrep
-
-    // If the payload is a string, attempt a lightweight parse
-    if (typeof base === "string") {
-      const lines = base.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
-      const q = lines.filter((l) => /\?$/.test(l)).slice(0, 12);
-      const t = lines.filter((l) => /^[-•\u2022]|^Tip/i.test(l)).map((l) => l.replace(/^[-•\u2022]\s*/, ""));
-      return { questions: q, tips: t.slice(0, 12) };
+    if (!input) return { content: "No interview preparation available." };
+    
+    // Handle string response from Gemini API
+    if (typeof input === "string") {
+      return { content: input };
     }
-
-    // Object shape normalization
-    const questions =
-      base.questions ||
-      base.commonQuestions ||
-      base.common_questions ||
-      base.technicalQuestions ||
-      base.behavioralQuestions ||
-      [];
-
-    const tips =
-      base.tips ||
-      base.preparationTips ||
-      base.advice ||
-      [];
-
-    return { questions, tips };
+    
+    // Handle object response
+    const base = input.interviewPrep || input.data || input;
+    
+    if (typeof base === "string") {
+      return { content: base };
+    }
+    
+    // If it's a structured object, convert to readable text
+    if (base && typeof base === "object") {
+      let content = "";
+      
+      if (base.technicalQuestions && base.technicalQuestions.length > 0) {
+        content += "**Technical Questions:**\n";
+        base.technicalQuestions.forEach((q, i) => {
+          content += `${i + 1}. ${q}\n`;
+        });
+        content += "\n";
+      }
+      
+      if (base.behavioralQuestions && base.behavioralQuestions.length > 0) {
+        content += "**Behavioral Questions:**\n";
+        base.behavioralQuestions.forEach((q, i) => {
+          content += `${i + 1}. ${q}\n`;
+        });
+        content += "\n";
+      }
+      
+      if (base.skillsToHighlight && base.skillsToHighlight.length > 0) {
+        content += "**Skills to Highlight:**\n";
+        content += base.skillsToHighlight.join(", ") + "\n\n";
+      }
+      
+      if (base.preparationChecklist && base.preparationChecklist.length > 0) {
+        content += "**Preparation Checklist:**\n";
+        base.preparationChecklist.forEach((item, i) => {
+          content += `• ${item}\n`;
+        });
+        content += "\n";
+      }
+      
+      if (base.questionsToAsk && base.questionsToAsk.length > 0) {
+        content += "**Questions to Ask Interviewer:**\n";
+        base.questionsToAsk.forEach((q, i) => {
+          content += `• ${q}\n`;
+        });
+      }
+      
+      return { content: content || "Interview preparation generated successfully." };
+    }
+    
+    return { content: "Interview preparation data received but could not be formatted." };
   };
 
   const handleInterviewPrep = async () => {
-    if (isGeneratingPrep || showPrep) return; // prevent double open / jitter
+    if (isGeneratingPrep || showPrep) return;
     setIsGeneratingPrep(true);
     try {
+      console.log('🤖 Generating interview prep for:', {
+        jobTitle: job.job_title || job.title,
+        company: job.employer_name || job.company
+      });
+      
       const prepData = await interviewService.generateInterviewPrep({
         jobTitle: job.job_title || job.title,
         companyName: job.employer_name || job.company,
         jobDescription: job.job_description || job.description,
       });
+      
+      console.log('📝 Interview prep response:', prepData);
+      
       const normalized = normalizeInterviewPrep(prepData.data || prepData);
-      // Ensure we always have arrays for rendering
       setInterviewPrep(normalized);
       setShowPrep(true);
     } catch (error) {
-      console.error("Failed to generate interview prep:", error);
-      // Provide fallback interview prep
+      console.error("❌ Failed to generate interview prep:", error);
       setInterviewPrep({
-        questions: [
-          `Tell me about your experience relevant to ${job.job_title || job.title
-          }`,
-          "Why are you interested in this position?",
-          "What do you know about our company?",
-          "Describe a challenging project you worked on",
-          "How do you handle working under pressure?",
-          "Where do you see yourself in 5 years?",
-          "What are your salary expectations?",
-          "Do you have any questions for us?",
-        ],
-        tips: [
-          "Research the company thoroughly",
-          "Prepare specific examples using STAR method",
-          "Practice common interview questions",
-          "Prepare thoughtful questions to ask",
-          "Dress professionally and arrive early",
-          "Show enthusiasm for the role",
-          "Follow up with a thank you email",
-        ],
+        content: `**Interview Preparation Failed**\n\nUnable to generate personalized interview prep using AI. This could be due to:\n\n• Gemini API not configured\n• Network connectivity issues\n• Service temporarily unavailable\n\n**General Tips:**\n• Research ${job.employer_name || job.company || 'the company'} thoroughly\n• Review the job description for key requirements\n• Prepare examples using the STAR method\n• Practice common interview questions\n• Prepare thoughtful questions to ask the interviewer`
       });
       setShowPrep(true);
     } finally {
@@ -292,27 +310,10 @@ export const JobCard = ({ job, onSave, onApply }) => {
         <div className="interview-prep-modal">
           <div className="prep-content">
             <h4>Interview Preparation for {job.job_title || job.title}</h4>
-            <div className="prep-section">
-              <h5>Common Questions:</h5>
-              <ul>
-                {(interviewPrep.questions && interviewPrep.questions.length > 0
-                  ? interviewPrep.questions
-                  : ["No questions available. Try again later or refine the job title/company."]
-                ).map((question, index) => (
-                  <li key={index}>{question}</li>
-                ))}
-              </ul>
-            </div>
-            <div className="prep-section">
-              <h5>Tips:</h5>
-              <ul>
-                {(interviewPrep.tips && interviewPrep.tips.length > 0
-                  ? interviewPrep.tips
-                  : ["Research the company and role thoroughly", "Prepare STAR stories for key achievements", "Practice aloud and do a mock interview"]
-                ).map((tip, index) => (
-                  <li key={index}>{tip}</li>
-                ))}
-              </ul>
+            <div className="prep-text-content">
+              <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', fontSize: '14px', lineHeight: '1.6' }}>
+                {interviewPrep.content || 'No interview preparation content available.'}
+              </pre>
             </div>
             <button
               onClick={() => setShowPrep(false)}
