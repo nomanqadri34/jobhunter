@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const RAW_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const RAW_BASE = import.meta.env.VITE_API_URL || 'https://jobhunter-dd9n.onrender.com/api';
 const API_BASE = (RAW_BASE || '').replace(/\/$/, '');
 
 class InterviewService {
