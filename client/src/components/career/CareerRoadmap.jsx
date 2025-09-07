@@ -188,7 +188,19 @@ Focus Areas
               disabled={loading || !jobTitle.trim()}
               className="generate-btn primary"
             >
-              {loading ? "Generating..." : "Generate Career Roadmap"}
+              {loading ? (
+                <>
+                  <div className="btn-spinner"></div>
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-4m-8 0V9a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-6 0h6m-6 0l3 3m3-3l-3 3"/>
+                  </svg>
+                  Generate Career Roadmap
+                </>
+              )}
             </button>
 
             <button
@@ -196,7 +208,20 @@ Focus Areas
               disabled={loading || !jobTitle.trim()}
               className="generate-btn secondary"
             >
-              {loading ? "Analyzing..." : "Analyze Skill Gap"}
+              {loading ? (
+                <>
+                  <div className="btn-spinner"></div>
+                  Analyzing...
+                </>
+              ) : (
+                <>
+                  <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+                  </svg>
+                  Analyze Skill Gap
+                </>
+              )}
             </button>
           </div>
         </div>

@@ -109,6 +109,11 @@ export const Dashboard = () => {
   };
 
   const handleResumeProcessed = (processedResumeData) => {
+    if (!processedResumeData) {
+      setResumeData(null);
+      return;
+    }
+    
     setResumeData(processedResumeData);
 
     // Update user skills and experience based on resume

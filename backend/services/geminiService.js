@@ -74,89 +74,46 @@ Make it practical and achievable for someone at the ${experienceLevel} level.
 
     async generateInterviewPrep(jobTitle, companyName, jobDescription = '', resumeData = null) {
         if (!this.model) {
-            console.log('Using fallback interview prep (Gemini API not available)');
-            return this.getFallbackInterviewPrep(jobTitle, companyName, resumeData);
+            throw new Error('Gemini API not available - cannot generate dynamic interview prep');
         }
 
+        // Extract dynamic data from resume and job description
+        const candidateSkills = resumeData?.Skills || resumeData?.skills || [];
+        const workExperience = resumeData?.WorkExperience || [];
+        const education = resumeData?.Education || [];
+        const experienceLevel = resumeData?.ExperienceLevel || resumeData?.experienceLevel || '';
+        
+        // Build dynamic context
+        const jobRequirements = this.extractJobRequirements(jobDescription);
+        const skillGaps = this.identifySkillGaps(candidateSkills, jobRequirements.skills);
+        
         const prompt = `
-Generate comprehensive interview preparation materials for a ${jobTitle} position at ${companyName}.
+Generate highly personalized interview preparation for:
+- Position: ${jobTitle} at ${companyName}
+- Job Description: ${jobDescription}
 
-Job Context:
-${jobDescription ? `Job Description: ${jobDescription}` : ''}
-
-${resumeData ? `
 Candidate Profile:
-- Skills: ${resumeData.skills ? resumeData.skills.join(', ') : 'Not specified'}
-- Experience: ${resumeData.experience || 'Not specified'}
-- Education: ${resumeData.education || 'Not specified'}
-- Summary: ${resumeData.summary || 'Not specified'}
-` : ''}
+- Skills: ${candidateSkills.join(', ')}
+- Experience Level: ${experienceLevel}
+- Work History: ${workExperience.map(exp => `${exp.JobTitle} at ${exp.Company}`).join(', ')}
+- Education: ${education.map(edu => `${edu.Degree} from ${edu.Institution}`).join(', ')}
 
-Please provide a JSON response with the following structure:
-{
-  "companyResearch": {
-    "keyFacts": ["fact1", "fact2", "fact3"],
-    "recentNews": ["news1", "news2"],
-    "culture": "description of company culture",
-    "values": ["value1", "value2", "value3"]
-  },
-  "technicalQuestions": [
-    "question1",
-    "question2",
-    "question3"
-  ],
-  "behavioralQuestions": [
-    "question1",
-    "question2",
-    "question3"
-  ],
-  "questionsToAsk": [
-    "question1",
-    "question2",
-    "question3"
-  ],
-  "technicalTopics": [
-    "topic1",
-    "topic2",
-    "topic3"
-  ],
-  "skillsToHighlight": [
-    "skill1",
-    "skill2",
-    "skill3"
-  ],
-  "mockScenarios": [
-    "scenario1",
-    "scenario2",
-    "scenario3"
-  ],
-  "preparationChecklist": [
-    "task1",
-    "task2",
-    "task3"
-  ],
-  "redFlags": [
-    "flag1",
-    "flag2",
-    "flag3"
-  ],
-  "timeline": {
-    "week1": "Week 1 preparation tasks",
-    "week2": "Week 2 preparation tasks",
-    "week3": "Week 3 preparation tasks",
-    "final": "Final preparation tasks"
-  },
-  "starExamples": [
-    {
-      "situation": "Example situation",
-      "task": "What you needed to do",
-      "action": "Actions you took",
-      "result": "Outcome achieved"
-    }
-  ]
-}
+Skill Analysis:
+- Matching Skills: ${jobRequirements.skills.filter(skill => candidateSkills.some(cs => cs.toLowerCase().includes(skill.toLowerCase()))).join(', ')}
+- Skills to Highlight: ${candidateSkills.slice(0, 5).join(', ')}
+- Potential Gaps: ${skillGaps.join(', ')}
 
-Make sure the response is valid JSON and tailored specifically to the ${jobTitle} role at ${companyName}.
+Generate SPECIFIC interview prep based on this EXACT job and candidate profile:
+
+1. Technical questions that test the EXACT skills mentioned in job description
+2. Behavioral questions that relate to candidate's ACTUAL experience
+3. Company-specific research points for ${companyName}
+4. Questions to ask that show understanding of THIS specific role
+5. STAR examples using candidate's REAL work experience
+6. Skills to emphasize based on job requirements match
+7. Preparation timeline focused on addressing skill gaps
+
+Return as JSON with dynamic, personalized content - NO generic responses.
 `;
 
         try {
@@ -304,92 +261,62 @@ Be specific and actionable. Focus on the most efficient path to becoming employa
         };
     }
 
-    getFallbackInterviewPrep(jobTitle, companyName, resumeData = null) {
-        const candidateSkills = resumeData?.skills || ['Communication', 'Problem Solving', 'Teamwork'];
+    extractJobRequirements(jobDescription) {
+        if (!jobDescription) return { skills: [], requirements: [] };
+        
+        const text = jobDescription.toLowerCase();
+        const commonSkills = [
+            'javascript', 'python', 'java', 'react', 'node.js', 'sql', 'aws', 'docker',
+            'kubernetes', 'git', 'agile', 'scrum', 'leadership', 'communication',
+            'project management', 'data analysis', 'machine learning', 'ai',
+            'marketing', 'sales', 'finance', 'accounting', 'design', 'ui/ux'
+        ];
+        
+        const foundSkills = commonSkills.filter(skill => text.includes(skill));
+        const requirements = [];
+        
+        if (text.includes('bachelor') || text.includes('degree')) requirements.push('Bachelor\'s degree');
+        if (text.includes('experience')) requirements.push('Relevant experience');
+        if (text.includes('remote')) requirements.push('Remote work capability');
+        
+        return { skills: foundSkills, requirements };
+    }
+    
+    identifySkillGaps(candidateSkills, jobSkills) {
+        const candidateSkillsLower = candidateSkills.map(s => s.toLowerCase());
+        return jobSkills.filter(jobSkill => 
+            !candidateSkillsLower.some(cs => cs.includes(jobSkill.toLowerCase()))
+        );
+    }
 
+    generateDynamicInterviewPrep(jobTitle, companyName, jobDescription, resumeData) {
+        if (!resumeData || !jobDescription) {
+            throw new Error('Resume data and job description required for dynamic interview prep');
+        }
+        
+        const candidateSkills = resumeData.Skills || resumeData.skills || [];
+        const workExperience = resumeData.WorkExperience || [];
+        const jobRequirements = this.extractJobRequirements(jobDescription);
+        const skillGaps = this.identifySkillGaps(candidateSkills, jobRequirements.skills);
+        
         return {
-            companyResearch: {
-                keyFacts: [`Research ${companyName}'s mission and values`, `Look up recent company news`, `Understand their products/services`],
-                recentNews: [`Check ${companyName}'s latest press releases`, `Review their social media updates`],
-                culture: `Research ${companyName}'s work culture and employee reviews on Glassdoor`,
-                values: ['Innovation', 'Teamwork', 'Excellence', 'Customer Focus']
+            message: 'Dynamic interview prep requires Gemini AI for personalized content',
+            candidateProfile: {
+                skills: candidateSkills,
+                experience: workExperience.map(exp => `${exp.JobTitle} at ${exp.Company}`),
+                skillMatches: jobRequirements.skills.filter(skill => 
+                    candidateSkills.some(cs => cs.toLowerCase().includes(skill.toLowerCase()))
+                ),
+                skillGaps: skillGaps
             },
-            technicalQuestions: [
-                `What experience do you have with ${jobTitle} responsibilities?`,
-                'Describe a challenging technical problem you solved recently',
-                'How do you approach debugging and troubleshooting?',
-                'What development methodologies are you familiar with?',
-                'How do you ensure code quality in your projects?',
-                'Describe your experience with version control systems',
-                'How do you stay updated with industry trends?',
-                'Walk me through your typical development workflow'
-            ],
-            behavioralQuestions: [
-                'Tell me about yourself and your career journey',
-                `Why are you interested in this ${jobTitle} position?`,
-                'Describe a time when you had to work under pressure',
-                'How do you handle conflicts with team members?',
-                'Tell me about a time you had to learn something new quickly',
-                'Describe a situation where you had to give constructive feedback',
-                'How do you prioritize tasks when you have multiple deadlines?',
-                'Tell me about a mistake you made and how you handled it'
-            ],
-            questionsToAsk: [
-                'What does a typical day look like for this role?',
-                'What are the biggest challenges facing the team right now?',
-                'How do you measure success in this position?',
-                'What opportunities are there for professional development?',
-                'Can you tell me about the team I\'d be working with?',
-                'What\'s the company culture like?',
-                'What are the next steps in the interview process?'
-            ],
-            technicalTopics: candidateSkills.concat(['Problem Solving', 'System Design', 'Best Practices']),
-            skillsToHighlight: candidateSkills.concat(['Leadership', 'Communication', 'Adaptability']),
-            mockScenarios: [
-                'Technical problem-solving session',
-                'System design discussion',
-                'Code review simulation',
-                'Project presentation',
-                'Pair programming exercise'
-            ],
-            preparationChecklist: [
-                'Research the company thoroughly',
-                'Review the job description and requirements',
-                'Prepare specific examples using the STAR method',
-                'Practice common interview questions out loud',
-                'Prepare thoughtful questions to ask the interviewer',
-                'Plan your outfit and route to the interview location',
-                'Bring multiple copies of your resume',
-                'Prepare a portfolio of your work (if applicable)'
-            ],
-            redFlags: [
-                'Vague job descriptions or responsibilities',
-                'High employee turnover rates',
-                'Poor communication during the interview process',
-                'Unrealistic expectations or timelines',
-                'Lack of growth opportunities',
-                'Poor work-life balance indicators'
-            ],
-            timeline: {
-                week1: 'Company research and job description analysis',
-                week2: 'Technical skills review and practice questions',
-                week3: 'Mock interviews and behavioral question preparation',
-                final: 'Final review, confidence building, and logistics planning'
+            jobAnalysis: {
+                requiredSkills: jobRequirements.skills,
+                requirements: jobRequirements.requirements,
+                matchPercentage: Math.round((jobRequirements.skills.filter(skill => 
+                    candidateSkills.some(cs => cs.toLowerCase().includes(skill.toLowerCase()))
+                ).length / Math.max(jobRequirements.skills.length, 1)) * 100)
             },
-            starExamples: [
-                {
-                    situation: 'Working on a critical project with a tight deadline',
-                    task: 'Deliver a high-quality solution within the time constraint',
-                    action: 'Organized team meetings, prioritized features, implemented efficient solutions',
-                    result: 'Delivered project on time with 95% client satisfaction'
-                },
-                {
-                    situation: 'Disagreement with a team member about technical approach',
-                    task: 'Resolve the conflict while maintaining team harmony',
-                    action: 'Listened to their concerns, presented data-driven arguments, found compromise',
-                    result: 'Improved team collaboration and delivered better solution'
-                }
-            ]
+            recommendation: 'Enable Gemini AI to generate personalized interview questions, company research, and preparation timeline based on your specific background and this job requirements.'
         };
     }
 }
