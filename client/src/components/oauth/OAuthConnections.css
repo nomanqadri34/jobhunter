@@ -1,0 +1,251 @@
+.oauth-connections {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.connections-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.connections-header h3 {
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+}
+
+.connections-header p {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 6px;
+  color: #c33;
+  margin-bottom: 1rem;
+}
+
+.connection-cards {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.connection-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.connection-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.connection-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.connection-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.connection-icon.google {
+  background: linear-gradient(45deg, #4285f4, #34a853);
+}
+
+.connection-icon.linkedin {
+  background: #0077b5;
+}
+
+.connection-details h4 {
+  margin: 0 0 0.5rem 0;
+  color: #1a1a1a;
+}
+
+.connection-details p {
+  margin: 0 0 0.75rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.connection-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.connection-features span {
+  padding: 0.25rem 0.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.connected-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.connected {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #28a745;
+  font-weight: 500;
+}
+
+.connected .success {
+  color: #28a745;
+}
+
+.btn-disconnect {
+  padding: 0.5rem 1rem;
+  border: 1px solid #dc3545;
+  background: transparent;
+  color: #dc3545;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-disconnect:hover {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-disconnect:disabled {
+  background: #ccc;
+  border-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.btn-connect {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.btn-connect.google {
+  background: #4285f4;
+  color: white;
+}
+
+.btn-connect.google:hover {
+  background: #3367d6;
+}
+
+.btn-connect.linkedin {
+  background: #0077b5;
+  color: white;
+}
+
+.btn-connect.linkedin:hover {
+  background: #005885;
+}
+
+.btn-connect:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.connection-benefits {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.connection-benefits h4 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #1a1a1a;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.benefit {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.benefit-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.benefit-text h5 {
+  margin: 0 0 0.5rem 0;
+  color: #1a1a1a;
+}
+
+.benefit-text p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .oauth-connections {
+    padding: 1rem;
+  }
+
+  .connection-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .connection-status {
+    align-self: stretch;
+    justify-content: center;
+  }
+
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+}
