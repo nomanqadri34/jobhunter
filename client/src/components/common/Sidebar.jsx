@@ -116,18 +116,6 @@ export const Sidebar = ({
             </button>
           ))}
         </nav>
-
-        <div className="sidebar-footer">
-          <div className="user-info">
-            <div className="user-avatar">
-              <User size={20} />
-            </div>
-            <div className="user-details">
-              <p className="user-name">John Doe</p>
-              <p className="user-role">Job Seeker</p>
-            </div>
-          </div>
-        </div>
       </aside>
     </>
   );

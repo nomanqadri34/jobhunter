@@ -1,55 +1,154 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: clamp(1rem, 3vw, 2rem);
+  box-sizing: border-box;
+}
+
+.auth-section {
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+.login-container,
 .descope-login-container {
-  max-width: 400px;
-  margin: 2rem auto;
-  padding: 2rem;
+  width: 100%;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
   background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   border: 1px solid #e5e7eb;
+  box-sizing: border-box;
 }
 
 .login-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1.5rem, 4vw, 2rem);
 }
 
+.login-header h1,
 .login-header h2 {
   color: #111827;
-  margin-bottom: 0.5rem;
-  font-size: 1.5rem;
-  font-weight: 600;
+  margin-bottom: 0.75rem;
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 .login-header p {
   color: #4b5563;
-  font-size: 0.9rem;
-  line-height: 1.4;
+  font-size: clamp(0.85rem, 2.5vw, 1rem);
+  line-height: 1.5;
+  max-width: 300px;
+  margin: 0 auto;
 }
 
 .login-footer {
-  margin-top: 2rem;
+  margin-top: clamp(1.5rem, 4vw, 2rem);
   text-align: center;
 }
 
 .login-footer p {
   color: #6b7280;
-  font-size: 0.8rem;
-  line-height: 1.4;
+  font-size: clamp(0.75rem, 2vw, 0.85rem);
+  line-height: 1.5;
+  max-width: 280px;
+  margin: 0 auto;
 }
 
-/* Descope component styling */
+/* Descope component responsive styling */
 descope-wc {
   width: 100%;
   display: block;
+  min-height: 300px;
+}
+
+/* Global button styling for Descope components */
+descope-wc::part(button) {
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem) !important;
+  font-size: clamp(0.9rem, 2.5vw, 1rem) !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+descope-wc::part(input) {
+  padding: clamp(0.75rem, 2vw, 1rem) !important;
+  font-size: clamp(0.9rem, 2.5vw, 1rem) !important;
+  border-radius: 8px !important;
+  border: 2px solid #e5e7eb !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+descope-wc::part(input):focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+@media (max-width: 768px) {
+  .login-page {
+    padding: 1rem;
+  }
+
+  .login-container,
+  .descope-login-container {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .login-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .login-footer {
+    margin-top: 1.5rem;
+  }
 }
 
 @media (max-width: 480px) {
-  .descope-login-container {
-    margin: 1rem;
-    padding: 1.5rem;
+  .login-page {
+    padding: 0.75rem;
   }
 
+  .login-container,
+  .descope-login-container {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .login-header h1,
   .login-header h2 {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
+  }
+
+  .login-header p {
+    font-size: 0.85rem;
+  }
+
+  .login-footer p {
+    font-size: 0.75rem;
+  }
+
+  descope-wc {
+    min-height: 250px;
+  }
+}
+
+@media (max-width: 360px) {
+  .login-container,
+  .descope-login-container {
+    padding: 0.75rem;
+  }
+
+  .login-header h1,
+  .login-header h2 {
+    font-size: 1.1rem;
   }
 }

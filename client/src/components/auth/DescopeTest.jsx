@@ -15,29 +15,11 @@ export const DescopeTest = () => {
       const descopeElement = descopeRef.current;
 
       if (descopeElement) {
-        console.log("Descope test element found");
-
-        // Listen for all events
+        // Event listeners for testing (silent)
         ["success", "error", "ready", "userAuthenticated", "loaded"].forEach(
           (eventName) => {
             descopeElement.addEventListener(eventName, (e) => {
-              console.log(`🔍 Descope ${eventName} event:`, e.detail);
-
-              if (eventName === "success") {
-                console.log("🎉 SUCCESS EVENT DETAILS:");
-                console.log("- Event detail:", e.detail);
-                console.log("- Event detail type:", typeof e.detail);
-                console.log(
-                  "- Event detail keys:",
-                  Object.keys(e.detail || {})
-                );
-
-                if (e.detail) {
-                  Object.keys(e.detail).forEach((key) => {
-                    console.log(`- ${key}:`, e.detail[key]);
-                  });
-                }
-              }
+              // Events handled silently for testing
             });
           }
         );

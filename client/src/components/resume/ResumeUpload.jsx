@@ -14,24 +14,101 @@ const ResumeUpload = ({ onResumeProcessed }) => {
 
   const extractSkillsFromText = (text) => {
     const skillKeywords = [
-      "javascript", "python", "java", "react", "node.js", "angular", "vue.js",
-      "html", "css", "sql", "mongodb", "postgresql", "mysql", "aws", "azure",
-      "docker", "kubernetes", "git", "github", "typescript", "php", "ruby",
-      "c++", "c#", ".net", "spring", "django", "flask", "express", "laravel",
-      "bootstrap", "tailwind", "sass", "less", "webpack", "babel", "npm",
-      "yarn", "redux", "vuex", "graphql", "rest api", "microservices",
-      "agile", "scrum", "devops", "ci/cd", "jenkins", "terraform", "ansible",
-      "linux", "ubuntu", "centos", "nginx", "apache", "redis", "elasticsearch",
-      "machine learning", "ai", "data science", "pandas", "numpy", "tensorflow",
-      "pytorch", "scikit-learn", "r", "matlab", "tableau", "power bi",
-      "project management", "leadership", "communication", "problem solving",
-      "teamwork", "analytical", "creative", "marketing", "sales", "finance",
-      "accounting", "excel", "powerpoint", "word", "photoshop", "illustrator",
-      "figma", "sketch", "ui/ux", "design", "wireframing", "prototyping"
+      "javascript",
+      "python",
+      "java",
+      "react",
+      "node.js",
+      "angular",
+      "vue.js",
+      "html",
+      "css",
+      "sql",
+      "mongodb",
+      "postgresql",
+      "mysql",
+      "aws",
+      "azure",
+      "docker",
+      "kubernetes",
+      "git",
+      "github",
+      "typescript",
+      "php",
+      "ruby",
+      "c++",
+      "c#",
+      ".net",
+      "spring",
+      "django",
+      "flask",
+      "express",
+      "laravel",
+      "bootstrap",
+      "tailwind",
+      "sass",
+      "less",
+      "webpack",
+      "babel",
+      "npm",
+      "yarn",
+      "redux",
+      "vuex",
+      "graphql",
+      "rest api",
+      "microservices",
+      "agile",
+      "scrum",
+      "devops",
+      "ci/cd",
+      "jenkins",
+      "terraform",
+      "ansible",
+      "linux",
+      "ubuntu",
+      "centos",
+      "nginx",
+      "apache",
+      "redis",
+      "elasticsearch",
+      "machine learning",
+      "ai",
+      "data science",
+      "pandas",
+      "numpy",
+      "tensorflow",
+      "pytorch",
+      "scikit-learn",
+      "r",
+      "matlab",
+      "tableau",
+      "power bi",
+      "project management",
+      "leadership",
+      "communication",
+      "problem solving",
+      "teamwork",
+      "analytical",
+      "creative",
+      "marketing",
+      "sales",
+      "finance",
+      "accounting",
+      "excel",
+      "powerpoint",
+      "word",
+      "photoshop",
+      "illustrator",
+      "figma",
+      "sketch",
+      "ui/ux",
+      "design",
+      "wireframing",
+      "prototyping",
     ];
 
     const textLower = text.toLowerCase();
-    const foundSkills = skillKeywords.filter(skill => 
+    const foundSkills = skillKeywords.filter((skill) =>
       textLower.includes(skill.toLowerCase())
     );
 
@@ -40,19 +117,21 @@ const ResumeUpload = ({ onResumeProcessed }) => {
 
   const searchJobsWithSkills = async (skills) => {
     const allJobs = [];
-    const RAPIDAPI_KEY = "178e03ae52msh333250cd810e2a4p19a7a1jsne730aff3a9b5";
+    const RAPIDAPI_KEY = "8e1cf54fc2mshe144bcff9435853p1044e5jsneb423ed7f536";
 
     for (const skill of skills.slice(0, 3)) {
       try {
         const query = `${skill} jobs`;
         const response = await fetch(
-          `https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(query)}&page=1&num_pages=1&country=us&date_posted=all`,
+          `https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(
+            query
+          )}&page=1&num_pages=1&country=us&date_posted=all`,
           {
             method: "GET",
             headers: {
               "x-rapidapi-host": "jsearch.p.rapidapi.com",
-              "x-rapidapi-key": RAPIDAPI_KEY
-            }
+              "x-rapidapi-key": RAPIDAPI_KEY,
+            },
           }
         );
 
@@ -68,17 +147,18 @@ const ResumeUpload = ({ onResumeProcessed }) => {
     }
 
     const uniqueJobs = allJobs.filter(
-      (job, index, self) => index === self.findIndex(j => j.job_id === job.job_id)
+      (job, index, self) =>
+        index === self.findIndex((j) => j.job_id === job.job_id)
     );
 
-    const jobsWithScores = uniqueJobs.map(job => {
+    const jobsWithScores = uniqueJobs.map((job) => {
       const jobTitle = (job.job_title || "").toLowerCase();
       const jobDesc = (job.job_description || "").toLowerCase();
-      
+
       let matchScore = 30;
       let skillMatches = 0;
 
-      skills.forEach(skill => {
+      skills.forEach((skill) => {
         const skillLower = skill.toLowerCase();
         if (jobTitle.includes(skillLower)) {
           matchScore += 20;
@@ -95,7 +175,7 @@ const ResumeUpload = ({ onResumeProcessed }) => {
     });
 
     return jobsWithScores
-      .filter(job => job.matchScore >= 40)
+      .filter((job) => job.matchScore >= 40)
       .sort((a, b) => b.matchScore - a.matchScore)
       .slice(0, 10);
   };
@@ -107,7 +187,9 @@ const ResumeUpload = ({ onResumeProcessed }) => {
       setExtractedSkills(skills);
 
       if (skills.length === 0) {
-        alert("No skills found. Please ensure your resume contains clear skill information.");
+        alert(
+          "No skills found. Please ensure your resume contains clear skill information."
+        );
         setJobs([]);
         return;
       }
@@ -119,7 +201,9 @@ const ResumeUpload = ({ onResumeProcessed }) => {
         onResumeProcessed({ skills, text });
       }
 
-      console.log(`Extracted ${skills.length} skills and found ${matchedJobs.length} matching jobs`);
+      console.log(
+        `Extracted ${skills.length} skills and found ${matchedJobs.length} matching jobs`
+      );
     } catch (error) {
       console.error("Resume processing error:", error);
       alert("Failed to process resume: " + error.message);
@@ -131,7 +215,7 @@ const ResumeUpload = ({ onResumeProcessed }) => {
   const extractTextFromPDF = async (file) => {
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    
+
     let textContent = "";
 
     for (let i = 1; i <= pdf.numPages; i++) {
@@ -148,9 +232,9 @@ const ResumeUpload = ({ onResumeProcessed }) => {
     if (!selectedFile) return;
 
     setFile(selectedFile);
-    
+
     try {
-      let text = '';
+      let text = "";
       if (selectedFile.type === "text/plain") {
         text = await selectedFile.text();
       } else if (selectedFile.type === "application/pdf") {
@@ -159,7 +243,7 @@ const ResumeUpload = ({ onResumeProcessed }) => {
         alert("Please upload a PDF or TXT file.");
         return;
       }
-      
+
       await processText(text);
     } catch (error) {
       alert(error.message);
@@ -179,17 +263,26 @@ const ResumeUpload = ({ onResumeProcessed }) => {
         <h4>{job.job_title}</h4>
         <span className="match-score">Match: {job.matchScore}%</span>
       </div>
-      
+
       <div className="job-details">
-        <p><strong>Company:</strong> {job.employer_name}</p>
-        <p><strong>Location:</strong> {job.job_city}, {job.job_state}</p>
-        {job.job_salary && <p><strong>Salary:</strong> {job.job_salary}</p>}
+        <p>
+          <strong>Company:</strong> {job.employer_name}
+        </p>
+        <p>
+          <strong>Location:</strong> {job.job_city}, {job.job_state}
+        </p>
+        {job.job_salary && (
+          <p>
+            <strong>Salary:</strong> {job.job_salary}
+          </p>
+        )}
         <p className="job-description">
           {job.job_description?.substring(0, 150)}...
         </p>
         {job.skillMatches > 0 && (
           <p className="skill-matches">
-            <strong>Skills Matched:</strong> {job.skillMatches} skill{job.skillMatches > 1 ? 's' : ''}
+            <strong>Skills Matched:</strong> {job.skillMatches} skill
+            {job.skillMatches > 1 ? "s" : ""}
           </p>
         )}
       </div>
@@ -213,7 +306,10 @@ const ResumeUpload = ({ onResumeProcessed }) => {
     <div className="resume-upload">
       <div className="upload-header">
         <h2>Resume Skill Extraction & Job Matching</h2>
-        <p>Upload your resume text or paste it below to extract skills and find matching jobs</p>
+        <p>
+          Upload your resume text or paste it below to extract skills and find
+          matching jobs
+        </p>
       </div>
 
       <div className="upload-section">
@@ -268,15 +364,16 @@ const ResumeUpload = ({ onResumeProcessed }) => {
       {jobs.length > 0 && (
         <div className="jobs-section">
           <h3>Matching Jobs ({jobs.length})</h3>
-          <div className="jobs-grid">
-            {jobs.map(renderJobCard)}
-          </div>
+          <div className="jobs-grid">{jobs.map(renderJobCard)}</div>
         </div>
       )}
 
       {!loading && extractedSkills.length > 0 && jobs.length === 0 && (
         <div className="no-jobs-message">
-          <p>No matching jobs found for your skills. Try different content or check back later.</p>
+          <p>
+            No matching jobs found for your skills. Try different content or
+            check back later.
+          </p>
         </div>
       )}
     </div>

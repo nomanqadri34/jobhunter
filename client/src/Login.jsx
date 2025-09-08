@@ -8,23 +8,31 @@ const Login = () => {
   const descopeFlowUrl = import.meta.env.VITE_DESCOPE_FLOW_URL;
 
   const onDescopeSuccess = (e) => {
-    console.log("Descope login successful:", e.detail.user);
     navigate("/dashboard");
   };
 
   const onDescopeError = (err) => {
-    console.error("Descope login error:", err);
     // Handle login error
   };
 
   return (
     <div className="login-page">
       <div className="auth-section">
-        <Descope
-          flowId="sign-up-or-in"
-          onSuccess={onDescopeSuccess}
-          onError={onDescopeError}
-        />
+        <div className="login-container">
+          <div className="login-header">
+            <h1>Welcome to Job Hunter</h1>
+            <p>Sign in to access your personalized job search dashboard</p>
+          </div>
+          <Descope
+            flowId="sign-up-or-in"
+            onSuccess={onDescopeSuccess}
+            onError={onDescopeError}
+            debug={false}
+          />
+          <div className="login-footer">
+            <p>By signing in, you agree to our Terms of Service and Privacy Policy</p>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -18,7 +18,7 @@ const getDescopeClient = () => {
       throw new Error('DESCOPE_MANAGEMENT_KEY environment variable is required');
     }
 
-    console.log('Initializing Descope client with project ID:', projectId);
+
 
     descopeClient = DescopeClient({
       projectId: projectId,
@@ -33,28 +33,17 @@ export const descopeService = {
   // Verify Descope JWT token
   async verifyToken(token) {
     try {
-      console.log('🔍 DescopeService: Validating token...');
       const client = getDescopeClient();
       const authInfo = await client.validateJwt(token);
 
-      console.log('🔍 DescopeService: Auth info:', authInfo);
-      console.log('🔍 DescopeService: Auth info type:', typeof authInfo);
-      console.log('🔍 DescopeService: Auth info keys:', Object.keys(authInfo || {}));
-      console.log('🔍 DescopeService: Claims:', authInfo.claims);
-      console.log('🔍 DescopeService: Token:', authInfo.token);
-      console.log('🔍 DescopeService: Token type:', typeof authInfo.token);
-      console.log('🔍 DescopeService: Token keys:', Object.keys(authInfo.token || {}));
-
-      // Use authInfo.token instead of authInfo.claims (based on the log output)
       const userData = authInfo.token || authInfo.claims || authInfo;
-      console.log('🔍 DescopeService: Using userData:', userData);
 
       return {
         success: true,
         user: userData
       };
     } catch (error) {
-      console.error('❌ Descope token verification error:', error);
+      console.error('Descope token verification error:', error);
       return {
         success: false,
         error: error.message

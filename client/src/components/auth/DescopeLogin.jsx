@@ -19,21 +19,6 @@ export const DescopeLogin = ({ onSuccess, onError }) => {
         // Listen for successful authentication
         descopeElement.addEventListener("success", async (e) => {
           try {
-            console.log("🎉 Descope success event detail:", e.detail);
-            console.log("🎉 Full event object:", e);
-            console.log("🎉 Event detail type:", typeof e.detail);
-
-            // Log all available properties
-            if (e.detail && typeof e.detail === "object") {
-              console.log("🎉 Available properties:", Object.keys(e.detail));
-              Object.keys(e.detail).forEach((key) => {
-                console.log(
-                  `🎉 ${key}:`,
-                  e.detail[key],
-                  `(${typeof e.detail[key]})`
-                );
-              });
-            }
 
             // The Descope web component should provide the session token
             // Let's try to get it from the Descope SDK directly
@@ -53,7 +38,6 @@ export const DescopeLogin = ({ onSuccess, onError }) => {
             // Method 2: Try to get session token from Descope SDK
             if (!token) {
               try {
-                // Import Descope SDK dynamically
                 const { Descope } = await import("@descope/web-js-sdk");
                 const descope = Descope({
                   projectId: import.meta.env.VITE_DESCOPE_PROJECT_ID,
@@ -61,10 +45,9 @@ export const DescopeLogin = ({ onSuccess, onError }) => {
                 const session = descope.getSessionToken();
                 if (session) {
                   token = session;
-                  console.log("🎉 Got token from Descope SDK:", token);
                 }
               } catch (sdkError) {
-                console.log("Could not get token from Descope SDK:", sdkError);
+                // SDK error handled silently
               }
             }
 
@@ -77,51 +60,24 @@ export const DescopeLogin = ({ onSuccess, onError }) => {
               token = e.detail;
             }
 
-            console.log("🎉 Final extracted token:", token);
-            console.log("🎉 Token type:", typeof token);
-            console.log("🎉 Token length:", token?.length);
-
-            // Validate token format (JWT should start with eyJ)
-            if (
-              token &&
-              typeof token === "string" &&
-              !token.startsWith("eyJ")
-            ) {
-              console.warn(
-                "⚠️ Token doesn't look like a JWT (should start with 'eyJ')"
-              );
-            }
-
             if (!token || typeof token !== "string" || token.length < 10) {
-              console.error("❌ No valid token found in Descope success event");
-              console.error(
-                "Available properties:",
-                Object.keys(e.detail || {})
-              );
               onError?.("Authentication succeeded but no valid token received");
               return;
             }
 
-            // Login with Descope token
-            console.log("🚀 Calling authService.login with token");
             const result = await authService.login(token);
 
             if (result.success) {
-              console.log("✅ Login successful");
               onSuccess?.(result.user);
             } else {
-              console.error("❌ Login failed:", result);
               onError?.("Login failed");
             }
           } catch (error) {
-            console.error("❌ Login error:", error);
             onError?.(error.message || "Login failed");
           }
         });
 
-        // Listen for authentication errors
         descopeElement.addEventListener("error", (e) => {
-          console.error("Descope authentication error:", e.detail);
           onError?.(e.detail.errorMessage || "Authentication failed");
         });
       }
@@ -147,7 +103,7 @@ export const DescopeLogin = ({ onSuccess, onError }) => {
         project-id={import.meta.env.VITE_DESCOPE_PROJECT_ID}
         flow-id="sign-up-or-in"
         theme="light"
-        debug="true"
+        debug="false"
         auto-focus="true"
       />
 
