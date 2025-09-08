@@ -452,12 +452,12 @@ export const jobController = {
       res.json({
         success: true,
         data: {
-          interviewPrep,
+          ...interviewPrep,
           videos,
           jobTitle,
           companyName
         },
-        message: 'Interview preparation generated successfully'
+        message: 'Interview preparation with videos generated successfully'
       });
     } catch (error) {
       console.error('Interview prep generation error:', error);

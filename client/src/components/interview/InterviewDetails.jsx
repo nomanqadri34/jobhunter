@@ -55,12 +55,15 @@ const InterviewDetails = () => {
 
     setLoading(true);
     try {
+      const userSkills = JSON.parse(localStorage.getItem('userSkills') || '[]');
+      
       const prepData = await geminiService.generateInterviewPrep(
         companyName.trim(),
-        jobTitle.trim()
+        jobTitle.trim(),
+        userSkills
       );
 
-      console.log('Gemini response:', prepData); // Debug log
+      console.log('Interview prep response:', prepData);
       
       setInterviewPrep({
         ...prepData,
@@ -235,17 +238,24 @@ const InterviewDetails = () => {
           </div>
         )}
 
-        {interviewPrep.videos && interviewPrep.videos.length > 0 && (
+        {prep.videos && prep.videos.length > 0 && (
           <div className="prep-section">
-            <h4>Recommended YouTube Videos</h4>
+            <h4>📺 Recommended YouTube Videos</h4>
             <div className="videos-grid">
-              {interviewPrep.videos.slice(0, 6).map((video, index) => (
+              {prep.videos.slice(0, 6).map((video, index) => (
                 <div key={index} className="video-card">
                   <div className="video-thumbnail">
-                    <img src={video.thumbnail} alt={video.title} />
+                    <img 
+                      src={video.thumbnail} 
+                      alt={video.title}
+                      onError={(e) => {
+                        e.target.src = 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg';
+                      }}
+                    />
+                    <div className="play-button">▶</div>
                   </div>
                   <div className="video-info">
-                    <h6>{video.title}</h6>
+                    <h6 title={video.title}>{video.title}</h6>
                     <p className="video-channel">{video.channelTitle}</p>
                     <a
                       href={video.url}
