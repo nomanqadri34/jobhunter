@@ -150,7 +150,7 @@ const InterviewDetails = () => {
                 <h5>Key Facts to Know</h5>
                 <ul>
                   {prep.companyResearch.keyFacts?.map((fact, index) => (
-                    <li key={index}>{fact}</li>
+                    <li key={index}>{typeof fact === 'string' ? fact : fact.general || JSON.stringify(fact)}</li>
                   ))}
                 </ul>
               </div>
@@ -158,7 +158,7 @@ const InterviewDetails = () => {
                 <h5>Recent News</h5>
                 <ul>
                   {prep.companyResearch.recentNews?.map((news, index) => (
-                    <li key={index}>{news}</li>
+                    <li key={index}>{typeof news === 'string' ? news : news.general || JSON.stringify(news)}</li>
                   ))}
                 </ul>
               </div>
@@ -177,7 +177,7 @@ const InterviewDetails = () => {
               <h5>Technical Questions</h5>
               <ul>
                 {prep.technicalQuestions?.map((question, index) => (
-                  <li key={index}>{question}</li>
+                  <li key={index}>{typeof question === 'string' ? question : question.question || JSON.stringify(question)}</li>
                 ))}
               </ul>
             </div>
@@ -185,7 +185,7 @@ const InterviewDetails = () => {
               <h5>Behavioral Questions</h5>
               <ul>
                 {prep.behavioralQuestions?.map((question, index) => (
-                  <li key={index}>{question}</li>
+                  <li key={index}>{typeof question === 'string' ? question : question.question || JSON.stringify(question)}</li>
                 ))}
               </ul>
             </div>
@@ -193,7 +193,7 @@ const InterviewDetails = () => {
               <h5>Questions to Ask Interviewer</h5>
               <ul>
                 {prep.questionsToAsk?.map((question, index) => (
-                  <li key={index}>{question}</li>
+                  <li key={index}>{typeof question === 'string' ? question : question.question || JSON.stringify(question)}</li>
                 ))}
               </ul>
             </div>
@@ -231,7 +231,7 @@ const InterviewDetails = () => {
               {prep.preparationChecklist.map((item, index) => (
                 <div key={index} className="checklist-item">
                   <input type="checkbox" id={`check-${index}`} />
-                  <label htmlFor={`check-${index}`}>{item}</label>
+                  <label htmlFor={`check-${index}`}>{typeof item === 'string' ? item : item.skill || JSON.stringify(item)}</label>
                 </div>
               ))}
             </div>
